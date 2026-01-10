@@ -11,4 +11,4 @@ app.post("/ask", async (req, res) => {
   res.json(response.data);
 });
 
-app.listen(3000, () => console.log("Node backend running"));
+app.listen(3000, () => console.log("Node backend running at 3000...."));
