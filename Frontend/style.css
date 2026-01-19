@@ -1,51 +1,97 @@
+/* Common body */
 body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa, #e4ebf5);
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-.box, .container {
-  width: 50%;
-  margin: 60px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
+/* Card layout (used for both pages) */
+.box,
+.container {
+  background: #ffffff;
+  padding: 35px;
+  width: 1000px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
+/* Headings */
+h1, h2 {
+  color: #2b4eff;
+  margin-bottom: 20px;
+}
+
+/* Input fields */
 input {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d0d7e2;
+  font-size: 14px;
+  margin-bottom: 15px;
+  outline: none;
 }
 
+input:focus {
+  border-color: #2b4eff;
+}
+
+/* Buttons */
 button {
-  padding: 10px 20px;
+  background: #2b4eff;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 15px;
+  border-radius: 25px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
+button:hover {
+  background: #1f3bd1;
+}
+
+/* Summary box */
 .summary {
-  background: #eef;
-  padding: 10px;
+  background: #f1f5ff;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Chatbox */
+.chatbox {
+  background: #f9fbff;
+  border: 1px solid #dce3f1;
+  border-radius: 12px;
+  padding: 12px;
+  height: 220px;
+  overflow-y: auto;
+  text-align: left;
   margin-bottom: 15px;
 }
 
-.chatbox {
-  border: 1px solid #ccc;
-  height: 200px;
-  padding: 10px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  text-align: left;
-}
-
+/* Chat bubbles */
 .user {
   text-align: right;
-  color: blue;
-  margin: 5px 0;
+  color: #2b4eff;
+  margin: 6px 0;
+  font-size: 14px;
 }
 
 .bot {
   text-align: left;
-  color: green;
-  margin: 5px 0;
+  color: #4a4a4a;
+  margin: 6px 0;
+  font-size: 14px;
 }
