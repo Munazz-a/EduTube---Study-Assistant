@@ -10,7 +10,14 @@ body {
 }
 
 /* Card layout (used for both pages) */
-.box,
+.box{
+   background: #ffffff;
+  padding: 35px;
+  width: 500px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
 .container {
   background: #ffffff;
   padding: 35px;
