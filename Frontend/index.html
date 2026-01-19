@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EduTube – Study Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="box">
+    <h1>EduTube – Study Assistant</h1>
+
+    <input type="text" id="link" placeholder="Paste YouTube link here">
+
+    <button onclick="goNext()">Generate</button>
+  </div>
+
+  <script>
+    function goNext() {
+      const link = document.getElementById("link").value;
+      localStorage.setItem("videoLink", link);
+      window.location.href = "summary.html";
+    }
+  </script>
+
+</body>
+</html>
