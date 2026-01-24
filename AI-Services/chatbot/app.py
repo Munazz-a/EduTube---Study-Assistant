@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import traceback
 import os
+from chatbot import answer_question
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 file_path = os.path.join(
@@ -25,7 +26,7 @@ def chat(req: ChatRequest):
         print("Your question:", req.question)
 
         # TEMP TEST RESPONSE
-        return {"answer": f"Context: {TRANSCRIPT}"}
+        return {"answer": answer_question(req.question)}
 
     except Exception as e:
         print("ERROR:")
