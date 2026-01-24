@@ -19,7 +19,12 @@ def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     print("⬇ Downloading audio...")
-    run(f'yt-dlp -f bestaudio -o "{AUDIO_M4A}" "{yt_url}"')
+    run(
+    f'yt-dlp --js-runtimes node '
+    f'-f bestaudio '
+    f'-o "{AUDIO_M4A}" '
+    f'"{yt_url}"'
+)
 
     print("🎚 Normalizing audio...")
     run(f'ffmpeg -y -i "{AUDIO_M4A}" -ar 16000 -ac 1 -vn "{CLEAN_WAV}"')
@@ -29,9 +34,9 @@ def main():
         f'whisper "{CLEAN_WAV}" '
         f'--task translate '
         f'--model base '
+        f'--verbose True '
         f'--output_dir "{OUTPUT_DIR}" '
         f'--output_format txt '
-        f'--language English'
     )
 
     print("✅ DONE!")
