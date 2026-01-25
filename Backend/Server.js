@@ -24,8 +24,6 @@ app.post("/ask", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Node backend running at 3000...."));
-
 app.listen(3000, () => {
   console.log("✅ Node backend running at http://localhost:3000");
 });
