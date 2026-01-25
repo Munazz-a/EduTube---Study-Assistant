@@ -12,16 +12,25 @@ console.log("STATIC DIR:", path.join(__dirname, "../Frontend"));
 app.use(express.static(path.join(__dirname, '../Frontend')));
 
 app.post("/ask", async (req, res) => {
-  const response = await axios.post("http://localhost:8000/chat", {
-    question: req.body.question
-  });
-  res.json(response.data);
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/chat",
+      { question: req.body.question }
+    );
+
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Python service not reachable" });
+  }
 });
 
+<<<<<<< HEAD
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../Frontend', 'home.html'));
 })
 
+=======
+>>>>>>> 911955afb57c530aa546c37359eefc48c6f47016
 app.listen(3000, () => {
   console.log("✅ Node backend running at http://localhost:3000");
 });
