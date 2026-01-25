@@ -1,8 +1,15 @@
-import express from "express";
-import axios from "axios";
-
+const express = require("express");
 const app = express();
-app.use(express.json());
+const path = require('path');
+require('dotenv').config();
+const axios = require("axios");
+
+app.use(express.urlencoded({extended : true}));
+app.use(express.json({ limit : "10mb" }));
+
+console.log("STATIC DIR:", path.join(__dirname, "../Frontend"));
+
+app.use(express.static(path.join(__dirname, '../Frontend')));
 
 app.post("/ask", async (req, res) => {
   try {
@@ -17,6 +24,8 @@ app.post("/ask", async (req, res) => {
   }
 });
 
+app.listen(3000, () => console.log("Node backend running at 3000...."));
+
 app.listen(3000, () => {
-  console.log("Node backend running on port 3000");
+  console.log("✅ Node backend running at http://localhost:3000");
 });
