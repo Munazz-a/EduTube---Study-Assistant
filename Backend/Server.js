@@ -15,7 +15,20 @@ app.post("/transcribe", async (req, res) => {
   try {
     const response = await axios.post(
       "http://localhost:8000/transcribe",
-      { videoLink: req.body.videoLink }
+      { videoLink : req.body.videoLink }
+    );
+
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// CHAT
+app.post("/chat", async (req, res) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8001/chat",
+      { question : req.body.question }
     );
 
     res.json(response.data);

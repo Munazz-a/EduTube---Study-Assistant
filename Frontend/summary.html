@@ -1,25 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>EduTube – Summary</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>EduTube – Summary & QnA</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
 
-  <div class="container">
+<body class="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200">
 
-    <h2>Video Summary</h2>
-    <div id="summary"> </div>
+  <!-- Fixed Header -->
+  <header class="fixed top-0 left-0 w-full bg-white shadow-sm p-4 text-center z-50">
+    <h1 class="text-xl font-semibold text-blue-600">
+      EduTube – Study Assistant
+    </h1>
+  </header>
 
+  <!-- Page Content (push down because header is fixed) -->
+  <div class="flex justify-center pt-20">
+    <div class="w-full max-w-4xl flex flex-col h-[calc(100vh-80px)]">
+
+      <!-- Content -->
+      <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+        <!-- Summary Section -->
+        <section class="bg-blue-50 border border-blue-200 rounded-xl p-5">
+          <h2 class="text-lg font-semibold text-blue-700 mb-2">
+            📄 Video Summary
+          </h2>
+          <p id="summary" class="text-gray-700 text-sm leading-relaxed"></p>
+        </section>
+
+        <!-- Chat Section -->
+        <section class="space-y-4" id="chatBox">
+
+          <!-- Bot Message -->
+          <div class="flex items-start gap-3">
+            <div id="botMessage" class="bg-white p-3 rounded-xl shadow text-sm max-w-[75%]">
+              Hi 👋 You can ask me any question related to the video summary.
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- Input Area (stays visible) -->
+      <footer class="bg-white border-t p-4 rounded-xl mb-4">
+        <div class="flex gap-3">
+          <input
+            id="questionInput"
+            type="text"
+            placeholder="Ask a question about the video..."
+            class="flex-1 px-4 py-2 border rounded-xl outline-none focus:border-blue-500 text-sm"
+          />
+          <button
+            onclick="askQuestion()"
+            class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition text-sm">
+            Send
+          </button>
+        </div>
+      </footer>
+
+    </div>
   </div>
 
-  <script>
-    document.getElementById("showLink").innerText =
-      localStorage.getItem("videoLink");
-  </script>
-  
-
-<script src="summary.js"></script>
+  <script src="summary.js"></script>
 
 </body>
 </html>
