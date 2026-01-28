@@ -14,6 +14,7 @@ async function startTranscripting(){
         document.getElementById("summary").innerHTML = data.transcript;
     } else {
         document.getElementById("summary").innerHTML = data.error;
+        console.log(data.error);
     }
 }
 startTranscripting();
@@ -54,7 +55,7 @@ async function askQuestion(){
         headers : { 'Content-Type' : 'application/json' },
         body : JSON.stringify({question})
     })
-    const data = response.json();
+    const data = await response.json();
     console.log(data);
 
     // Bot Message
@@ -63,5 +64,5 @@ async function askQuestion(){
         ${data.answer}
     </div>
     `;
-    chatBot.appendChild(botDiv);
+    // chatBot.appendChild(botDiv);
 }
