@@ -1,6 +1,8 @@
 import ollama
 
 def answer_question(question, context=""):
+    print("===== CONTEXT SENT TO LLM =====")
+    print(context[:500])
     prompt = f"""
 You are an intelligent assistant.
 
