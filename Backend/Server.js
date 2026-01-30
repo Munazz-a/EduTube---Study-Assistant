@@ -15,27 +15,28 @@ app.post("/transcribe", async (req, res) => {
   try {
     const response = await axios.post(
       "http://localhost:8000/transcribe",
-      { videoLink : req.body.videoLink }
+      { videoId : req.body.videoId }
     );
 
     res.json(response.data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Python transcription service not reachable" });
   }
 });
 // CHAT
 app.post("/chat", async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8001/chat",
+      "http://localhost:8000/chat",
       { question : req.body.question }
     );
 
     res.json(response.data);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Python chat service not reachable" });
   }
 });
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../Frontend', 'home.html'));

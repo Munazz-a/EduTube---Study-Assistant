@@ -1,59 +1,88 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import subprocess
 import os
+import glob
 
-from chatbot import answer_question
 from rag import build_vector_store, retrieve_context
+from chatbot import answer_question
 
 app = FastAPI()
+
+index = None
+chunks = None
+
+CAPTION_DIR = "captions"
+os.makedirs(CAPTION_DIR, exist_ok=True)
+
+
+class TranscribeRequest(BaseModel):
+    videoId: str
+
 
 class ChatRequest(BaseModel):
     question: str
 
-# ---------- PATH FIX (robust) ----------
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-TRANSCRIPT_PATH = os.path.join(
-    BASE_DIR,
-    "Ai-Services",
-    "transcribe",
-    "output",
-    "clean.txt"
-)
 
-# ---------- GLOBAL CACHE ----------
-index = None
-chunks = None
-transcript_loaded = False
+def fetch_captions_with_ytdlp(video_id: str) -> str | None:
+    url = f"https://www.youtube.com/watch?v={video_id}"
+
+    cmd = [
+        "yt-dlp",
+        "--skip-download",
+        "--write-auto-sub",
+        "--write-sub",
+        "--sub-lang", "en",
+        "--sub-format", "vtt",
+        "-o", f"{CAPTION_DIR}/{video_id}.%(ext)s",
+        url
+    ]
+
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        return None
+
+    vtt_files = glob.glob(f"{CAPTION_DIR}/{video_id}*.vtt")
+    if not vtt_files:
+        return None
+
+    transcript_lines = []
+    with open(vtt_files[0], "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or "-->" in line or line.isdigit():
+                continue
+            transcript_lines.append(line)
+
+    return " ".join(transcript_lines)
 
 
-def load_transcript_once():
-    global index, chunks, transcript_loaded
+@app.post("/transcribe")
+def transcribe(req: TranscribeRequest):
+    global index, chunks
 
-    if transcript_loaded:
-        return
+    transcript = fetch_captions_with_ytdlp(req.videoId)
 
-    if not os.path.exists(TRANSCRIPT_PATH):
-        raise FileNotFoundError("Transcript not found")
-
-    with open(TRANSCRIPT_PATH, "r", encoding="utf-8") as f:
-        transcript = f.read()
+    if not transcript:
+        return {"error": "❌ Captions unavailable (video restricted or CC disabled)"}
 
     index, chunks = build_vector_store(transcript)
-    transcript_loaded = True
-    print("✅ Transcript loaded & indexed")
+
+    return {
+        "status": "ok",
+        "preview": transcript[:3000]
+    }
 
 
 @app.post("/chat")
 def chat(req: ChatRequest):
-    global index, chunks
-
-    try:
-        load_transcript_once()
-    except FileNotFoundError:
-        return {
-            "answer": "Transcript not found. Please summarize the video first."
-        }
+    if index is None:
+        return {"answer": "Please transcribe a video first"}
 
     context = retrieve_context(req.question, index, chunks)
-    answer = answer_question(req.question, context)
-    return {"answer": answer}
+    return {"answer": answer_question(req.question, context)}
+
+
+
+
