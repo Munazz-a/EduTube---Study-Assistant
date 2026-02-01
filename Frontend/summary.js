@@ -72,7 +72,7 @@ window.askQuestion = async function () {
   });
 
   const data = await res.json();
-  alert(data.answer);
+  // alert(data.answer);
 
   // Bot Message
     botDiv.innerHTML = `
@@ -82,3 +82,18 @@ window.askQuestion = async function () {
     `;
     // chatBot.appendChild(botDiv);
 };
+
+window.downloadPDF = function () {
+  const element = document.getElementById("pdfContent");
+
+  const options = {
+    margin: 0.5,
+    filename: `EduTube_${new Date().toLocaleDateString()}.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+  };
+
+  html2pdf().set(options).from(element).save();
+};
+

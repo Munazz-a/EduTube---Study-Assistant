@@ -29,6 +29,7 @@ def fetch_captions_with_ytdlp(video_id: str) -> str | None:
 
     cmd = [
         "yt-dlp",
+        "--cookies", "cookies.txt",
         "--skip-download",
         "--write-auto-sub",
         "--write-sub",
@@ -82,7 +83,3 @@ def chat(req: ChatRequest):
 
     context = retrieve_context(req.question, index, chunks)
     return {"answer": answer_question(req.question, context)}
-
-
-
-
