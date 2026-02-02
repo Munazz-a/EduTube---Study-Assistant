@@ -77,7 +77,7 @@ def transcribe(req: TranscribeRequest):
 
 
 @app.post("/chat")
-def chat(req: ChatRequest):
+async def chat(req: ChatRequest):
     if index is None:
         return {"answer": "Please transcribe a video first"}
 
