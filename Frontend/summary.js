@@ -10,6 +10,7 @@ function extractVideoId(url) {
   }
 }
 
+const sessionId = crypto.randomUUID();
 
 async function loadVideo() {
   const videoLink = localStorage.getItem("videoLink");
@@ -20,7 +21,10 @@ async function loadVideo() {
   const res = await fetch("/transcribe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ videoId })
+    body: JSON.stringify({ 
+      videoId : videoId,
+      sessionId : sessionId
+    })
   });
 
   const data = await res.json();
@@ -68,7 +72,10 @@ window.askQuestion = async function () {
   const res = await fetch("http://localhost:3000/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question })
+    body: JSON.stringify({ 
+      question : question,
+      sessionId : sessionId
+    })
   });
 
   const data = await res.json();

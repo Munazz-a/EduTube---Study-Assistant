@@ -8,6 +8,8 @@ from rag import build_vector_store, retrieve_context
 from chatbot import answer_question
 
 app = FastAPI()
+sessions = {}
+
 
 index = None
 chunks = None
@@ -18,10 +20,12 @@ os.makedirs(CAPTION_DIR, exist_ok=True)
 
 class TranscribeRequest(BaseModel):
     videoId: str
+    sessionId: str
 
 
 class ChatRequest(BaseModel):
     question: str
+    sessionId: str
 
 
 def fetch_captions_with_ytdlp(video_id: str) -> str | None:
@@ -63,13 +67,20 @@ def fetch_captions_with_ytdlp(video_id: str) -> str | None:
 def transcribe(req: TranscribeRequest):
     global index, chunks
 
-    transcript = fetch_captions_with_ytdlp(req.videoId)
 
+    if req.sessionId in sessions:
+        return {"status": "already_processed"}
+
+    transcript = fetch_captions_with_ytdlp(req.videoId)
     if not transcript:
         return {"error": "❌ Captions unavailable (video restricted or CC disabled)"}
 
     index, chunks = build_vector_store(transcript)
 
+    sessions[req.sessionId] = {
+        "index": index,
+        "chunks": chunks
+    }
     return {
         "status": "ok",
         "preview": transcript[:3000]
@@ -78,8 +89,14 @@ def transcribe(req: TranscribeRequest):
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
-    if index is None:
+    session = sessions.get(req.sessionId)
+    print("Session:", req.sessionId)
+    if not session:
         return {"answer": "Please transcribe a video first"}
 
-    context = retrieve_context(req.question, index, chunks)
+    context = retrieve_context(
+        req.question,
+        session["index"],
+        session["chunks"]
+    )
     return {"answer": answer_question(req.question, context)}
