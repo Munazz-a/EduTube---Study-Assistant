@@ -15,7 +15,10 @@ app.post("/transcribe", async (req, res) => {
   try {
     const response = await axios.post(
       "http://localhost:8000/transcribe",
-      { videoId : req.body.videoId }
+      { 
+        videoId : req.body.videoId,
+        sessionId : req.body.sessionId
+      }
     );
 
     res.json(response.data);
@@ -28,7 +31,10 @@ app.post("/chat", async (req, res) => {
   try {
     const response = await axios.post(
       "http://localhost:8000/chat",
-      { question : req.body.question }
+      { 
+        question : req.body.question,
+        sessionId : req.body.sessionId
+      }
     );
 
     res.json(response.data);
