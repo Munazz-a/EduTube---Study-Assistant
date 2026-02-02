@@ -3,7 +3,7 @@ import faiss
 import numpy as np
 from functools import lru_cache
 
-# ✅ Embedding model (DO NOT change this to Ollama model)
+# ✅ Embedding model
 embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 
@@ -29,7 +29,7 @@ def build_vector_store(text):
     return index, chunks
 
 
-# ✅ CACHE question embeddings (THIS is what I told you to add)
+# ✅ CACHE question embeddings
 @lru_cache(maxsize=128)
 def embed_question(question: str):
     return embed_model.encode([question])
