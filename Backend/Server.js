@@ -43,6 +43,21 @@ app.post("/chat", async (req, res) => {
   }
 });
 
+app.post("/summarize", async (req, res) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/summarize",
+      { 
+        sessionId: req.body.sessionId
+      }
+    );
+
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Python summarize service not reachable" });
+  }
+});
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../Frontend', 'home.html'));

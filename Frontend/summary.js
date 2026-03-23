@@ -10,7 +10,13 @@ function extractVideoId(url) {
   }
 }
 
-const sessionId = crypto.randomUUID();
+// const sessionId = crypto.randomUUID();
+let sessionId = localStorage.getItem("sessionId");
+
+if (!sessionId) {
+  sessionId = crypto.randomUUID();
+  localStorage.setItem("sessionId", sessionId);
+}
 
 async function loadVideo() {
   const videoLink = localStorage.getItem("videoLink");
@@ -30,7 +36,19 @@ async function loadVideo() {
   const data = await res.json();
 
   if (data.preview) {
-    document.getElementById("summary").innerText = data.preview;
+    document.getElementById("summary").innerText = "⏳ Generating AI Summary...";
+
+    const sumRes = await fetch("/summarize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId: sessionId
+      })
+    });
+
+  const sumData = await sumRes.json();
+
+  document.getElementById("summary").innerText = sumData.summary;
   } else {
     document.getElementById("summary").innerText = data.error || "❌ Failed to fetch transcript";
   }
@@ -69,7 +87,7 @@ window.askQuestion = async function () {
     `;
     chatBot.appendChild(botDiv);
 
-  const res = await fetch("http://localhost:3000/chat", {
+  const res = await fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ 
@@ -84,7 +102,7 @@ window.askQuestion = async function () {
   // Bot Message
     botDiv.innerHTML = `
     <div class="bg-white p-3 rounded-xl shadow text-sm max-w-[75%]">
-        ${data.answer}
+        ${marked.parse(data.answer)}
     </div>
     `;
     // chatBot.appendChild(botDiv);
