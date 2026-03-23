@@ -5,14 +5,11 @@ import os
 import glob
 
 from rag import build_vector_store, retrieve_context
-from chatbot import answer_question
+from chatbot import answer_question, summarize_transcript
 
 app = FastAPI()
 sessions = {}
 
-
-index = None
-chunks = None
 
 CAPTION_DIR = "captions"
 os.makedirs(CAPTION_DIR, exist_ok=True)
@@ -22,11 +19,12 @@ class TranscribeRequest(BaseModel):
     videoId: str
     sessionId: str
 
-
 class ChatRequest(BaseModel):
     question: str
     sessionId: str
 
+class SummarizeRequest(BaseModel):
+    sessionId: str
 
 def fetch_captions_with_ytdlp(video_id: str) -> str | None:
     url = f"https://www.youtube.com/watch?v={video_id}"
@@ -44,7 +42,13 @@ def fetch_captions_with_ytdlp(video_id: str) -> str | None:
     ]
 
     try:
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        result = subprocess.run(cmd, capture_output=True, text=True)
+
+        print("STDOUT:", result.stdout)
+        print("STDERR:", result.stderr)
+
+        if result.returncode != 0:
+            return None
     except subprocess.CalledProcessError:
         return None
 
@@ -100,3 +104,14 @@ async def chat(req: ChatRequest):
         session["chunks"]
     )
     return {"answer": answer_question(req.question, context)}
+
+@app.post("/summarize")
+def summarize(req: SummarizeRequest):
+    session = sessions.get(req.sessionId)
+
+    if not session:
+        return {"summary": "Please transcribe a video first"}
+
+    summary = summarize_transcript(session["chunks"])
+
+    return {"summary": summary}
