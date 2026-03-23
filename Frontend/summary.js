@@ -10,13 +10,13 @@ function extractVideoId(url) {
   }
 }
 
-// const sessionId = crypto.randomUUID();
-let sessionId = localStorage.getItem("sessionId");
+const sessionId = crypto.randomUUID();
+// let sessionId = localStorage.getItem("sessionId");
 
-if (!sessionId) {
-  sessionId = crypto.randomUUID();
-  localStorage.setItem("sessionId", sessionId);
-}
+// if (!sessionId) {
+//   sessionId = crypto.randomUUID();
+//   localStorage.setItem("sessionId", sessionId);
+// }
 
 async function loadVideo() {
   const videoLink = localStorage.getItem("videoLink");
@@ -105,7 +105,8 @@ window.askQuestion = async function () {
         ${marked.parse(data.answer)}
     </div>
     `;
-    // chatBot.appendChild(botDiv);
+    // Auto scroll to bottom
+    chatBot.scrollTop = chatBot.scrollHeight;
 };
 
 window.downloadPDF = function () {

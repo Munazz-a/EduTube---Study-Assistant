@@ -3,6 +3,8 @@ from pydantic import BaseModel
 import subprocess
 import os
 import glob
+from youtube_transcript_api import YouTubeTranscriptApi
+
 
 from rag import build_vector_store, retrieve_context
 from chatbot import answer_question, summarize_transcript
@@ -25,6 +27,15 @@ class ChatRequest(BaseModel):
 
 class SummarizeRequest(BaseModel):
     sessionId: str
+
+
+def fetch_transcript_api(video_id: str) -> str | None:
+    try:
+        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        return " ".join([t["text"] for t in transcript])
+    except Exception as e:
+        print("YT API failed:", e)
+        return None
 
 def fetch_captions_with_ytdlp(video_id: str) -> str | None:
     url = f"https://www.youtube.com/watch?v={video_id}"
@@ -71,11 +82,26 @@ def fetch_captions_with_ytdlp(video_id: str) -> str | None:
 def transcribe(req: TranscribeRequest):
     global index, chunks
 
+    for f in glob.glob(f"{CAPTION_DIR}/{req.videoId}*"):
+        os.remove(f)
+    
+    # if req.sessionId in sessions:
+    #     return {"status": "already_processed"}
 
-    if req.sessionId in sessions:
-        return {"status": "already_processed"}
+    # transcript = fetch_captions_with_ytdlp(req.videoId)
+    # 1️⃣ Try YouTube Transcript API first
+    transcript = fetch_transcript_api(req.videoId)
 
-    transcript = fetch_captions_with_ytdlp(req.videoId)
+    # 2️⃣ Fallback to yt-dlp
+    if not transcript:
+        print("Falling back to yt-dlp...")
+        transcript = fetch_captions_with_ytdlp(req.videoId)
+
+    # 3️⃣ If STILL no transcript
+    if not transcript:
+        return {
+            "error": "❌ Could not fetch transcript from any source"
+        }
     if not transcript:
         return {"error": "❌ Captions unavailable (video restricted or CC disabled)"}
 
@@ -115,3 +141,5 @@ def summarize(req: SummarizeRequest):
     summary = summarize_transcript(session["chunks"])
 
     return {"summary": summary}
+
+print("ALL SESSIONS:", list(sessions.keys()))

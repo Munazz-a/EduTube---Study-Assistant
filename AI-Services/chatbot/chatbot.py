@@ -68,6 +68,8 @@ def summarize_transcript(chunks):
 
     # Step 2: Combine summaries
     combined_text = "\n".join(chunk_summaries)
+    if len(combined_text) > 8000:
+        combined_text = combined_text[:8000]
 
     final_response = client.chat.completions.create(
         model="llama-3.1-8b-instant",
