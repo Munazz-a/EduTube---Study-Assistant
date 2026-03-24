@@ -64,6 +64,7 @@ window.askQuestion = async function () {
   if (!question) return;
 
   input.value = "";
+  input.focus();
 
   const chatBot = document.getElementById('chatBox');
 
@@ -76,6 +77,7 @@ window.askQuestion = async function () {
     </div>
     `;
     chatBot.appendChild(userDiv);
+    scrollToBottom();
 
     //Bot typing
     const botDiv = document.createElement('div');
@@ -86,6 +88,7 @@ window.askQuestion = async function () {
     </div>
     `;
     chatBot.appendChild(botDiv);
+    scrollToBottom();
 
   const res = await fetch("/chat", {
     method: "POST",
@@ -105,9 +108,21 @@ window.askQuestion = async function () {
         ${marked.parse(data.answer)}
     </div>
     `;
-    // Auto scroll to bottom
-    chatBot.scrollTop = chatBot.scrollHeight;
+    scrollToBottom();
 };
+
+// Auto scroll to bottom
+  function scrollToBottom() {
+    const chatBox = document.getElementById("chatBox");
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+document.getElementById("questionInput").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    askQuestion();
+  }
+});
 
 window.downloadPDF = function () {
   const element = document.getElementById("pdfContent");
