@@ -1,7 +1,6 @@
 fastapi
 uvicorn
-sentence-transformers==2.2.2
-torch==2.0.0
+sentence-transformers
 faiss-cpu
 numpy
 python-dotenv
