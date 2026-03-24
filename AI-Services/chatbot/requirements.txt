@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sentence-transformers
+faiss-cpu
+numpy
+python-dotenv
+groq
+youtube-transcript-api
+yt-dlp
